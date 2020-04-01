@@ -23,6 +23,7 @@
         die(var_dump($e));
     }
     ?>
+    <!--Formular auf der HTML Webseite-->
     <form method="post" action="./index1.php" enctype="multipart/form-data">
         <label for="name ">Name:
             <input type="text" id="name" name="name" required>
@@ -42,6 +43,7 @@
         Mailliste <br>
 
         <?php
+        //Checkboxen der Ligas werden aus der Datenbank dynamisch generiert.
         $sql_select = "SELECT * from liga";
         $stmt = $conn->query($sql_select);
         $registrants = $stmt->fetchAll();
@@ -61,7 +63,7 @@
 
 
 
-
+// Logik nach dem Absenden des Formulars. Daten werden in die jeweiligen Tabellen geschrieben
     if (!empty($_POST)) {
         try {
             $sql_ausgewahlt = "SELECT * FROM mail_name WHERE email ='" .  $_POST['email'] . "'";
