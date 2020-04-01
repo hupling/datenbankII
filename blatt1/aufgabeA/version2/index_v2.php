@@ -7,7 +7,7 @@
 	</head>
 	<body>
 		<p>Wähle deinen lieblings Fußballverein:</p>
-		<form action='.' method='POST'>
+		<form action='./index_v2.php' method='POST'>
 			<div class="toggle-buttons">
 				<?php
 					try {
