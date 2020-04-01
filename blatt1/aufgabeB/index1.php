@@ -86,8 +86,7 @@
 
 
 
-                foreach ($liga as  $re) {
-                    echo  $re . " <br>";
+                foreach ($Fliga as  $re) {
 
                     $sql_insert = "INSERT INTO mail (email, mailliste) VALUES (?,?)";
                     $stmt = $conn->prepare($sql_insert);

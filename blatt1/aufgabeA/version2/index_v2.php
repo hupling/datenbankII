@@ -7,7 +7,7 @@
 	</head>
 	<body>
 		<p>Wähle deinen lieblings Fußballverein:</p>
-		<form action='index1.php' method='POST'>
+		<form action='.' method='POST'>
 			<div class="toggle-buttons">
 				<?php
 					try {
@@ -55,7 +55,7 @@
 						$stmt = $pdo->query("SELECT SUM(votes) AS anz FROM clubs");
 						$anzahl_user = $stmt->fetch();
 						echo "Anzahl Teilnehmer: ".$anzahl_user['anz']."<br>";
-						echo '<a href="/DBS/ClubVote/statistik1.php">Link zur Statistik</a>';
+						echo '<a href="statistik_v2.php">Link zur Statistik</a>';
 					}
 				} catch (Exception $e) {
 					die(var_dump($e));

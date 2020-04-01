@@ -31,9 +31,9 @@
         <label for="c"> Alle</label> <br>
 
         <input type="radio" id="a" name="mitglied" value="ja" />
-        <label for="a"> Mitglieder im Fußballverein?</label> <br>
+        <label for="a"> Fußballverein-Mitglieder</label> <br>
         <input type="radio" id="b" name="mitglied" value="nein" />
-        <label for="b"> Nicht-Mitglieder</label> <br>
+        <label for="b">Nicht-Mitglieder</label> <br>
 
 
         Mailliste <br>
@@ -41,10 +41,10 @@
         <?php
         $sql_select = "SELECT * from liga";
         $stmt = $conn->query($sql_select);
-        $registrants = $stmt->fetchAll();
-        foreach ($registrants as $key => $registrant) {
-            echo "<input type='checkbox' id='liga' name='liga[]' value='" . $registrant['liga'] . "'>";
-            echo "<label for='liga'>" . $registrant['liga'] . "</label><br>";
+        $ligas = $stmt->fetchAll();
+        foreach ($ligas as  $liga) {
+            echo "<input type='checkbox' id='liga' name='liga[]' value='" . $liga['liga'] . "'>";
+            echo "<label for='liga'>" . $liga['liga'] . "</label><br>";
         }
 
         ?>
@@ -68,51 +68,49 @@
 
     if (!empty($_POST)) {
         $mitglied = $_POST['mitglied'];
-        $hallo = "";
+        $sql_query = "";
         if ($mitglied == "alle") {
-            $hallo .= "SELECT email from mail_name where";
+            $sql_query .= "SELECT email from mail_name where";
         } else {
-            $hallo .= "SELECT email from mail_name WHERE mitglied='" . $mitglied . "' AND ";
+            $sql_query .= "SELECT email from mail_name WHERE mitglied='" . $mitglied . "' AND ";
         }
         echo "<br>";
-       
+
         if (empty($_POST['liga'])) {
-             
-        //fans ohne mail verteiler
-            $hallo .= " NOT EXISTS (SELECT DISTINCT email FROM mail WHERE mail.email = mail_name.email)";
+
+            //fans ohne mail verteiler
+            $sql_query .= " NOT EXISTS (SELECT DISTINCT email FROM mail WHERE mail.email = mail_name.email)";
         } else {
 
             //alle         
-            $liga = $_POST['liga'];
+            $liga_checkbox = $_POST['liga'];
 
-            $hallo .= " EXISTS (SELECT DISTINCT email FROM mail WHERE mail.email = mail_name.email and (";
-            foreach ($liga as  $re) {
-                $hallo .= " mailliste ='" . $re . "' OR";
+            $sql_query .= " EXISTS (SELECT DISTINCT email FROM mail WHERE mail.email = mail_name.email and (";
+            foreach ($liga_checkbox as  $liga) {
+                $sql_query .= " mailliste ='" . $liga . "' OR";
             }
-            $hallo .= " false))";
+            $sql_query .= " false))";
         }
-        echo $hallo;
+        //echo $sql_query;
 
-        $sql_select = $hallo;
-        $stmt = $conn->query($sql_select);
-        $registrants = $stmt->fetchAll();
+        $stmt = $conn->query($sql_query);
+        $email_adressen = $stmt->fetchAll();
 
 
-        if(count($registrants) > 0) {
-            echo "<h2>Statistik:</h2>";
+        if (count($email_adressen) > 0) {
+            echo "<h2>Email-Adressen:</h2>";
             echo "<table>";
             echo "<tr><th>Email</th>";
 
             echo "</tr>";
-            foreach($registrants as $registrant) {
-                echo "<tr><td>".$registrant['email']."</td>";
-              echo"</td></tr>";
+            foreach ($email_adressen as $email_adresse) {
+                echo "<tr><td>" . $email_adresse['email'] . "</td>";
+                echo "</td></tr>";
             }
-             echo "</table>";
+            echo "</table>";
         } else {
             echo "Keine Einträge</h3>";
         }
-      
     }
     ?>
 
