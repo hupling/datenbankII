@@ -1,0 +1,10 @@
+create type KontoT as Object (nummer INT, stand Float, art VARCHAR2(1))
+create type KontolisteT as Table of ref kontot
+create type ZweigstelleT as Object (name VARCHAR2(30), adresse VARCHAR2(30), leiter varchar2(30), konto kontolistet)
+create type kundet as object( nummer INT,name varchar2(30),adresse varchar2(30),status varchar2(30),konto kontolistet)
+
+create table akonto of kontot
+create table azweigstelle of zweigstellet nested table  konto store as konto_nt
+create table akunde of kundet nested table  konto store as konto_nt1
+
+INSERT INTO "SYSTEM"."AKONTO" (NUMMER, STAND, ART) VALUES ('120768', '234,56', 's')
