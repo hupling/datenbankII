@@ -14,9 +14,17 @@ INSERT INTO "AKONTO" "kontot" values ('987654', '789,65', 'g');
 INSERT INTO "AKONTO" "kontot" values ('745363', '-23,67', 's');
 
 
-INSERT INTO "AZWEIGSTELLE" "zweigstellet" values ('Bachdorf', 'Hochstr. 1', 1768,kontolistet( (select Ref(w) from akonto w where w.nummer = 120758 ),(select Ref(w) from akonto w where w.nummer = 678453 ),(select Ref(w) from akonto w where w.nummer = 348973 ))) ;
+INSERT INTO "AZWEIGSTELLE" "zweigstellet" values ('Bachdorf', 'Hochstr. 1', 1768,kontolistet( (select Ref(w) from akonto w where w.nummer = 120768 ),(select Ref(w) from akonto w where w.nummer = 678453 ),(select Ref(w) from akonto w where w.nummer = 348973 ))) ;
 INSERT INTO "AZWEIGSTELLE" "zweigstellet" values ('Riedering', 'Simse estr. 3', 9823,kontolistet( (select Ref(w) from akonto w where w.nummer = 987654 ),(select Ref(w) from akonto w where w.nummer = 745363 ))) ;
 
 insert into "AKUNDE" "kunde" values (2345, 'H. Fach','Münchnerstr. 33','Geschäftskunde',kontolistet( (select Ref(w) from akonto w where w.nummer = 120768 ),(select Ref(w) from akonto w where w.nummer = 348973 ))) ;
 insert into "AKUNDE" "kunde" values (7654, 'B. Meier','Eschenweg 12','Privatkunde',kontolistet( (select Ref(w) from akonto w where w.nummer = 987654 ))) ;
 insert into "AKUNDE" "kunde" values (8764, 'J. Wiesner','Schellingstr. 52','Geschäftskunde',kontolistet( (select Ref(w) from akonto w where w.nummer = 745363 ),(select Ref(w) from akonto w where w.nummer = 678453 ),(select Ref(w) from akonto w where w.nummer = 348973 ))) ;
+
+
+NR 4 a)
+select  deref(a.COLUMN_VALUE).nummer, deref(a.COLUMN_VALUE).stand, deref(a.COLUMN_VALUE).art, p.adresse as Zweigstelleadresse from azweigstelle p, Table(p.konto) a ;
+
+NR 4b)
+
+select  deref(a.COLUMN_VALUE).nummer, max( p.adresse) from akunde p, Table(p.konto) a group by deref(a.COLUMN_VALUE).nummer
