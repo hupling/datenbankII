@@ -1,17 +1,22 @@
-create type KontoT as Object (nummer INT, stand Float, art VARCHAR2(1))
-create type KontolisteT as Table of ref kontot
-create type ZweigstelleT as Object (name VARCHAR2(30), adresse VARCHAR2(30), leiter varchar2(30), konto kontolistet)
-create type kundet as object( nummer INT,name varchar2(30),adresse varchar2(30),status varchar2(30),konto kontolistet)
+create type KontoT as Object (nummer INT, stand Float, art VARCHAR2(1));
+create type KontolisteT as Table of ref kontot;
+create type ZweigstelleT as Object (name VARCHAR2(30), adresse VARCHAR2(30), leiter varchar2(30), konto kontolistet);
+create type kundet as object( nummer INT,name varchar2(30),adresse varchar2(30),status varchar2(30),konto kontolistet);
 
-create table akonto of kontot
-create table azweigstelle of zweigstellet nested table  konto store as konto_nt
-create table akunde of kundet nested table  konto store as konto_nt1
+create table akonto of kontot;
+create table azweigstelle of zweigstellet nested table  konto store as konto_nt;
+create table akunde of kundet nested table  konto store as konto_nt1;
 
-INSERT INTO "AKONTO" "kontot" values ('120758', '234,56', 's')
-INSERT INTO "AKONTO" "kontot" values ('678453', '-456,78', 'g')
-INSERT INTO "AKONTO" "kontot" values ('348973', '12567,56', 'g')
-INSERT INTO "AKONTO" "kontot" values ('987654', '789,65', 'g')
-INSERT INTO "AKONTO" "kontot" values ('745363', '-23,67', 's')
+INSERT INTO "AKONTO" "kontot" values ('120758', '234,56', 's');
+INSERT INTO "AKONTO" "kontot" values ('678453', '-456,78', 'g');
+INSERT INTO "AKONTO" "kontot" values ('348973', '12567,56', 'g');
+INSERT INTO "AKONTO" "kontot" values ('987654', '789,65', 'g');
+INSERT INTO "AKONTO" "kontot" values ('745363', '-23,67', 's');
 
 
-select ref(w) from akonto w  where  w.nummer ='120768'
+INSERT INTO "AZWEIGSTELLE" "zweigstellet" values ('Bachdorf', 'Hochstr. 1', 1768,kontolistet( (select Ref(w) from akonto w where w.nummer = 120758 ),(select Ref(w) from akonto w where w.nummer = 678453 ),(select Ref(w) from akonto w where w.nummer = 348973 ))) ;
+INSERT INTO "AZWEIGSTELLE" "zweigstellet" values ('Riedering', 'Simse estr. 3', 9823,kontolistet( (select Ref(w) from akonto w where w.nummer = 987654 ),(select Ref(w) from akonto w where w.nummer = 745363 ))) ;
+
+insert into "AKUNDE" "kunde" values (2345, 'H. Fach','Münchnerstr. 33','Geschäftskunde',kontolistet( (select Ref(w) from akonto w where w.nummer = 120768 ),(select Ref(w) from akonto w where w.nummer = 348973 ))) ;
+insert into "AKUNDE" "kunde" values (7654, 'B. Meier','Eschenweg 12','Privatkunde',kontolistet( (select Ref(w) from akonto w where w.nummer = 987654 ))) ;
+insert into "AKUNDE" "kunde" values (8764, 'J. Wiesner','Schellingstr. 52','Geschäftskunde',kontolistet( (select Ref(w) from akonto w where w.nummer = 745363 ),(select Ref(w) from akonto w where w.nummer = 678453 ),(select Ref(w) from akonto w where w.nummer = 348973 ))) ;
