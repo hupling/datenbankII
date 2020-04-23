@@ -19,13 +19,16 @@
  	echo "<table>";
  	echo "<tr><th>Verein</th>";
  	echo "<th>Stimmenanzahl</th>";
-     echo "<th>Percentage</th></tr>";
+    echo "<th>Prozentual</th></tr>";
+	$sumvotes = 0;
  	foreach($registrants as $registrant) {
+		$sumvotes += $registrant['count'];
  		echo "<tr><td>".$registrant['verein']."</td>";
  		echo "<td>".$registrant['count']."</td>";
  		echo "<td>".$registrant['percent']." %</td></tr>";
      }
-  	echo "</table>";
+  	echo "</table><br>";
+	echo "Gesamtanzahl Stimmen: $sumvotes";
  } else {
  	echo "Keine Einträge</h3>";
  }

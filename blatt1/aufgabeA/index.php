@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fußball</title>
+    <title>Fußballverein-Abstimmung</title>
 </head>
 <body>
     <form method="post" action="index.php" enctype="multipart/form-data">
@@ -33,7 +33,7 @@
 			?>
 			
             <input type="radio" id="h" name="Verein" value="sonstiges" />
-            <input type="text" id="h" name="sonstiges"> <br>
+            <input type="text" id="h" name="sonstiges" maxlength="50" > <br>
 			<br>
             <input type="submit" name="submit" value="Abstimmen" />
         </fieldset>
@@ -45,29 +45,26 @@
                 $message = "Bitte Auswahl treffen";
                 echo "<script type='text/javascript'>alert('$message');</script>";
             } else {
-                //$time = date("Y-m-d H:i:s");
                 $verein = $_POST['Verein'];
                 $sonst = $_POST['sonstiges'];
                 if ($verein == "sonstiges") {
-                    //echo "<script type='text/javascript'>alert('$message');</script>";
                     $verein = trim($sonst);
                 }
                 // Insert data
                 $sql_insert = "INSERT INTO verein (verein) VALUES (?)";
                 $stmt = $conn->prepare($sql_insert);
-                //$stmt->bindValue(1, $time);
                 $stmt->bindValue(1, $verein);
-
                 $stmt->execute();
+				
+				echo "<h3>Eintrag gespeichert: $verein</h3>";
+				$statement = $conn->query("SELECT COUNT(*) AS anz FROM verein");
+				$anzahl_user = $statement->fetch();
+				echo "Anzahl der bisherigen Teilnehmer: ".$anzahl_user['anz']."<br>";
+				echo '<a href="./statistik.php">Link zur Statistik</a>';
             }
         } catch (Exception $e) {
             die(var_dump($e));
         }
-        $statement = $conn->query("SELECT COUNT(*) AS anz FROM verein");
-		$anzahl_user = $statement->fetch();
-        echo "<h3>Eintrag gespeichert: $verein</h3>";
-        echo "Anzahl der bisherigen Teilnehmer: ".$anzahl_user['anz']."<br>";
-        echo '<a href="/DBS/ClubVote/statistik.php">Link zur Statistik</a>';
     }
     ?>
 </body>
