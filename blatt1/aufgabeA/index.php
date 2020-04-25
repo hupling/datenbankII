@@ -22,7 +22,7 @@
 				} catch (Exception $e) {
 					die(var_dump($e));
 				}
-				$stmt = $conn->query("SELECT verein FROM verein GROUP BY verein");
+				$stmt = $conn->query("SELECT distinct( verein) FROM verein");
 				$vereine = $stmt->fetchAll();
 				if(count($vereine) > 0) {
 					foreach($vereine as $verein) {

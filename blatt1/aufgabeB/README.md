@@ -57,7 +57,7 @@ INSERT INTO mail (email, mailliste) VALUES (?,?)
 ```sql
 SELECT * from liga
 ```
-### Lange Abfrage zum Auswählen der Email-Adressen
+#### Lange Abfrage zum Auswählen der Email-Adressen
 * Auswählen des Mitgliderstatus aus der Mail_Name Tabelle
 
 ```sql

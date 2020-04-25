@@ -1,0 +1,14 @@
+create type Campus_T as Object(campus_location varchar2(20), campus_adress varchar2(20),campus_phone varchar2(20), campus_fax varchar2(20))
+create type Building_T as Object (bld_ID varchar2(20), bld_location varchar2(20), bld_level varchar2(20), campus_location ref campus_T, fac_id ref faculty_t)
+
+
+create type Faculty_T as Object (Fac_id varchar2(20), fac_name varchar2(20), fac_dean varchar2(20),
+
+
+
+create type School_T(School_ID varchar2(20), school_name varchar2(20), school_head varchar2(20), school_prof
+
+
+
+create type Professor_T (prof_ID varchar2(20), prof_name varchar2(20), prof_contact varchar2(20), prof_research varchar2(20), prof_year varchar(20))
+
