@@ -1,14 +1,22 @@
-create type Campus_T as Object(campus_location varchar2(20), campus_adress varchar2(20),campus_phone varchar2(20), campus_fax varchar2(20))
+create type Campus_T as Object(campus_location varchar2(20), campus_adress varchar2(20),campus_phone varchar2(20), campus_fax varchar2(20), campus_head varchar2(20))
 create type Building_T as Object (bld_ID varchar2(20), bld_location varchar2(20), bld_level varchar2(20), campus_location ref campus_T, fac_id ref faculty_t)
 
 
-create type Faculty_T as Object (Fac_id varchar2(20), fac_name varchar2(20), fac_dean varchar2(20),
+create type Faculty_T as Object (Fac_id varchar2(20), fac_name varchar2(20), fac_dean varchar2(20), school school_table_T, department department_table_t, research_centre research_centre_table_t)
 
 
 
-create type School_T(School_ID varchar2(20), school_name varchar2(20), school_head varchar2(20), school_prof
+create type School_T(School_ID varchar2(20), school_name varchar2(20), school_head varchar2(20), school_prof Professors)
+create type school_table_t as table of school_t
+
+create type department_T as object(dept_id varchar2(20), dept_name varchar2(20), dept_head varchar2(20), dept_prof Professors)
+create type department_Table_T as table of department_t 
 
 
+create type research_centre_t as object ( rc_id varchar2(20), rc_name varchar2(20), rc_head varchar2(20), rc_unit Units)
+create type research_centre_table_t as table of research_centre_T
+
+create type Lab_t as object(bld_id varchar2(20), lab_no varchar2(20), lab_capacity number, lab_equipment Equipments)
 
 create type Professor_T (prof_ID varchar2(20), prof_name varchar2(20), prof_contact varchar2(20), prof_research varchar2(20), prof_year varchar(20))
 
