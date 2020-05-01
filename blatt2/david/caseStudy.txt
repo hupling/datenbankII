@@ -1,22 +1,98 @@
-create type Campus_T as Object(campus_location varchar2(20), campus_adress varchar2(20),campus_phone varchar2(20), campus_fax varchar2(20), campus_head varchar2(20))
-create type Building_T as Object (bld_ID varchar2(20), bld_location varchar2(20), bld_level varchar2(20), campus_location ref campus_T, fac_id ref faculty_t)
+create type Campus_T as Object(campus_location varchar2(20), campus_adress varchar2(50),campus_phone varchar2(20), campus_fax varchar2(20), campus_head varchar2(20));
+create table campus of campus_T
+
+insert into campus campus_T values('Albury/Wodonga', 'Parkers Road Wodanga VIC 3690', '61260583700', '62026058377','John Hill');
+insert into campus campus_t values('City', '215 Franklin St. Melb VIC 3000','61392855100','610392855111', 'Michael A. OLeary');
+insert into campus campus_t values('Mildura', 'Benetook Ave. Mildura Vic 3502', '61350223757','61350223646','Ron Broadhead');
 
 
-create type Faculty_T as Object (Fac_id varchar2(20), fac_name varchar2(20), fac_dean varchar2(20), school school_table_T, department department_table_t, research_centre research_centre_table_t)
+create type Professor_T as Object (prof_ID varchar2(20), prof_name varchar2(20), prof_contact varchar2(20), prof_research varchar2(20), prof_year varchar2(20));
+create table professor of professor_t;
+
+
+insert into professor('1','Chris Handley','aaa','aaa','2020');
+insert into professor('2','Shenna Reilly','aaa','aaa','2020');
+insert into professor('3','Alison Pery','aaa','aaa','2020');
+insert into professor('4','Jan Branson','aaa','aaa','2020');
+insert into professor('5','Nick Hoogenraad','aaa','aaa','2020');
+insert into professor('6','Robin Anders','aaa','aaa','2020');
+insert into professor('7','Claude Bernard','aaa','aaa','2020');
+insert into professor('8','Bruce Stone','aaa','aaa','2020');
+
+create type  units as varray(10) of varchar2(50)
+create type professors as varray(10) of ref professor_t
+
+create type School_T as object(School_ID varchar2(20), school_name varchar2(20), school_head varchar2(20), school_prof professors);
+create type school_table_t as table of  school_t;
+
+create type department_T as object(dept_id varchar2(20), dept_name varchar2(20), dept_head varchar2(20), dept_prof professors);
+create type department_Table_T as table of  department_t ;
+
+
+create type research_centre_t as object ( rc_id varchar2(20), rc_name varchar2(20), rc_head varchar2(20), rc_unit units );
+create type research_centre_table_t as table of research_centre_t;
+
+
+create type Faculty_T as Object (Fac_id varchar2(20), fac_name varchar2(20), fac_dean varchar2(20), school school_table_T, department  department_table_t,  research_centre research_centre_table_t);
+
+
+create table faculty of faculty_t nested table school store as school_tab nested table department store as department_tab nested table research_centre store as research_tab
 
 
 
-create type School_T(School_ID varchar2(20), school_name varchar2(20), school_head varchar2(20), school_prof Professors)
-create type school_table_t as table of school_t
+insert into faculty faculty_t values('1', 'Health Science', 'S. Duckett',school_table_t(),department_table_t(),research_centre_table_t());
+insert into faculty faculty_t values('2', 'Humanity &Social Sc.', 'J. A. Salmond',school_table_t(),department_table_t(),research_centre_table_t());
+insert into faculty faculty_t values('3', 'Law & Management', 'G. C. O Brien',school_table_t(),department_table_t(),research_centre_table_t());
+insert into faculty faculty_t values('4', 'Science, Tech & Eng', 'D. Finlay',school_table_t(),department_table_t(),research_centre_table_t());
+insert into faculty faculty_t values('5', 'Regional Department', 'L. Kilmartin',school_table_t(),department_table_t(),research_centre_table_t());
 
-create type department_T as object(dept_id varchar2(20), dept_name varchar2(20), dept_head varchar2(20), dept_prof Professors)
-create type department_Table_T as table of department_t 
+update faculty set  school=school_table_t(school_T('1-1','Human Biosciences','Chris Handley',professors((select ref(p) from professor p where p.prof_name = 'Chris Handley'))),school_T('1-2','Human Comm- Sciences','Elizabeth Lavender',professors((select ref(p) from professor p where p.prof_name = 'Sheena Reilly'),(select ref(p) from professor p where p.prof_name = 'Alison Perry'),(select ref(p) from professor p where p.prof_name ='Jan Branson')))) where fac_id = 1;
+update faculty set  research_centre=research_centre_table_t(research_centre_T('1-1','Australian Reasea','Marian Pitts', units('SSAY Projects','HIV Futures','Australian Study of Health and Relationsships')),research_centre_T('1-2','Australian Insti', 'Hal Swerissen',Units('Centre for Dev- and Innovation in Health', 'Centre for Quality in Health & Community Svc-', 'Lincoln Gerontology Centre'))) where fac_id = 1;
+
+update faculty set department=department_table_t(department_t('4.1','Agricultural S.','Mark Sandemna',Professors()),department_t('4-2','Biochemistry', 'Nick Hoogenraad',Professors((select ref(p) from professor p where p.prof_name = 'Nick Hoogenraad'),(select ref(p) from professor p where p.prof_name = 'Robin Anders'),(select ref(p) from professor p where p.prof_name = 'Claude Bernard'),(select ref(p) from professor p where p.prof_name = 'Bruce Stone'))))  where fac_id = 1;
 
 
-create type research_centre_t as object ( rc_id varchar2(20), rc_name varchar2(20), rc_head varchar2(20), rc_unit Units)
-create type research_centre_table_t as table of research_centre_T
+create type Building_T as Object (bld_ID varchar2(20),bld_name varchar2(20),  bld_location varchar2(20), bld_level varchar2(20), campus_location ref campus_T, fac_id ref faculty_t)
 
-create type Lab_t as object(bld_id varchar2(20), lab_no varchar2(20), lab_capacity number, lab_equipment Equipments)
 
-create type Professor_T (prof_ID varchar2(20), prof_name varchar2(20), prof_contact varchar2(20), prof_research varchar2(20), prof_year varchar(20))
+create table building of building_t
 
+insert into building building_t values('BB1','Beth Gleeson','D5',4,(select ref(c) from campus c where campus_location='Bundoora' ),(select ref(f) from faculty f where fac_id=4));
+insert into building building_t values('BB2','Martin Building','F5',4,(select ref(c) from campus c where campus_location='Bundoora' ),(select ref(f) from faculty f where fac_id=3));
+insert into building building_t values('BB3','Thomas Cherry','D4',4,(select ref(c) from campus c where campus_location='Bundoora' ),(select ref(f) from faculty f where fac_id=1));
+insert into building building_t values('BB4','Physical Science 1','D5',3,(select ref(c) from campus c where campus_location='Bundoora' ),(select ref(f) from faculty f where fac_id=4));
+
+create type office_t as object(bld_id ref building_T, off_no varchar2(20), off_phone varchar2(20));
+create table office of office_t;
+
+insert into office office_T values ((select ref(b) from building b where bld_id='BB4'),'BG207','94791118');
+insert into office office_T values ((select ref(b) from building b where bld_id='BB4'),'BG208','94792393');
+
+create type classroom_t as object(bld_id ref building_t,class_no  varchar2(20), class_capacity number);
+create table classroom of classroom_t;
+
+insert into classroom classroom_T values ((select ref(b) from building b where bld_id='BB3'),'TCLT',50);
+insert into classroom classroom_T values ((select ref(b) from building b where bld_id='BB3'),'TC01',30);
+
+create type Equipment_t as Object(num number, name varchar2(20))
+create type Equipment_table_T as table of equipment_t
+
+
+
+
+create type Degree_t as object(deg_id varchar2(20), deg_name varchar2(20), deg_length number, deg_prereq varchar2(20), fac_id ref faculty_T)
+create table degree of degree_t
+
+ 
+insert into degree degree_T values('D100', 'Bachelor of Comp S',3, 'Year 12 or equivial.',(select ref(f) from faculty f where fac_id = 4 ));
+insert into degree degree_T values('D101', 'Master of Comp Sci',3, 'Bach of Comp Sci',(select ref(f) from faculty f where fac_id = 4 ));
+
+
+create type equipment_ITem_T as Object (count number,name varchar2(20));
+create type equipments as varray(10) of equipment_ITem_T
+
+create type Lab_t as object(bld_id ref building_T, lab_no varchar2(20), lab_capacity number, lab_equipment Equipments)
+create table lab of lab_t
+
+insert into lab lab_T values ((select ref(b) from building b where bld_id='BB1'),'BG113',25, Equipments(Equipment_ITem_T(25, 'PC'),equipment_ITem_T(1, 'Printer')));
+insert into lab lab_T values ((select ref(b) from building b where bld_id='BB1'),'BG114',20, Equipments(Equipment_ITem_T(21, 'PC')));
