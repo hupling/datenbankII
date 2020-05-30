@@ -49,9 +49,21 @@ INSERT INTO Konto Konto_T values ('348973', '12567,56', 'g', (SELECT Ref(z) FROM
 INSERT INTO Konto Konto_T values ('987654', '789,65', 'g', (SELECT Ref(z) FROM Zweigstelle z WHERE z.name = 'Riedering'), Kundenliste_T ((SELECT Ref(k) FROM Kunde k WHERE k.nummer = 7654)));
 INSERT INTO Konto Konto_T values ('745363', '-23,67', 's', (SELECT Ref(z) FROM Zweigstelle z WHERE z.name = 'Riedering'), Kundenliste_T((SELECT Ref(k) FROM Kunde k WHERE k.nummer = 8764)))
 
-NR 4 a)
-select  deref(a.COLUMN_VALUE).nummer, deref(a.COLUMN_VALUE).stand, deref(a.COLUMN_VALUE).art, p.adresse as Zweigstelleadresse from azweigstelle p, Table(p.konto) a ;
+4.a)
 
-NR 4b)
+Variante 1.
+SELECT deref(a.COLUMN_VALUE).nummer AS Kontonummer, deref(a.COLUMN_VALUE).stand AS Kontostand, deref(a.COLUMN_VALUE).art AS Kontoart,
+z.adresse AS Zweigstellenadresse FROM Zweigstelle z, TABLE(z.konto) a ;
 
-select  deref(a.COLUMN_VALUE).nummer, max( p.adresse) from akunde p, Table(p.konto) a group by deref(a.COLUMN_VALUE).nummer
+Variante 2.
+SELECT k.nummer, k.stand, k.art, deref(k.zweigstelle).adresse AS Adresse FROM Konto k;
+
+
+4.b)
+
+Variante 1.
+SELECT deref(a.COLUMN_VALUE).nummer AS Kontonummer, max(k.adresse) FROM Kunde k,
+Table(k.konto) a GROUP BY deref(a.COLUMN_VALUE).nummer;
+
+Variante 2.
+SELECT k.nummer AS Kontonummer, deref(a.COLUMN_VALUE).adresse AS Kundenadresse FROM Konto k, Table(k.kunde) a;
