@@ -96,3 +96,200 @@ create table lab of lab_t
 
 insert into lab lab_T values ((select ref(b) from building b where bld_id='BB1'),'BG113',25, Equipments(Equipment_ITem_T(25, 'PC'),equipment_ITem_T(1, 'Printer')));
 insert into lab lab_T values ((select ref(b) from building b where bld_id='BB1'),'BG114',20, Equipments(Equipment_ITem_T(21, 'PC')));
+
+
+
+--- Lukas ---
+
+
+create type person_t as object (
+pers_id varchar2(10),
+pers_surname varchar2(20),
+pers_fname varchar2(20),
+pers_title varchar2(10),
+pers_address varchar2(50),
+pers_phone varchar2(20),
+pers_postcode number,
+in_campus ref campus_t) not final;
+
+
+create type staff_t under person_t
+(in_office ref office_t,
+staff_type varchar2(20)) not final;
+
+
+create type student_t under person_t
+(year number);
+
+create table student of student_t
+(pers_id not null,
+primary key (pers_id));
+
+insert into student student_t values
+('01234234',  'Grant', 'Felix', 'Mr',
+'2 Boadle Rd Bundoora VIC', '0398548753', '3083',
+(select ref(c) from campus c where campus_location='Bundoora'), '2000');
+
+insert into student student_t values
+('10012568', 'Fring', 'Gustavo', 'Mr', 'adress', '01234556', '34567',
+(select ref(c) from campus c where C.campus_location = 'City'), '2000');
+
+insert into student student_t values
+('01958652', 'Bliblo', 'Bleber', 'Mr', 'adress1', '01234556', '43567',
+(select ref(c) from campus c where C.campus_location = 'City'), '2000');
+
+
+create type admin_t under staff_t
+(admin_title varchar2(20),
+comp_skills varchar2(50),
+office_skills varchar2(50));
+
+create table admin of admin_t 
+(pers_id not null,
+staff_type not null check(staff_type in ('Admin')),
+primary key (pers_id));
+
+insert into admin admin_t values
+('10002935', 'Jones', 'Felicity', 'Ms',
+'14 Rennie St Thornbury VIC', '0398722001', '3071',
+(select ref(c) from campus c where campus_location='Bundoora'),
+(select ref(o) from office o where off_no='BG210'),
+'Admin', 'Office Manager', '', 'Managerial');
+
+insert into admin admin_t values
+('10008957', 'Biba', 'Butzemann', 'Ms',
+'tricke di track', '0398722001', '3071',
+(select ref(c) from campus c where campus_location='City'),
+(select ref(o) from office o where off_no='BG207'),
+'Admin', 'Receptionist', 'MS Office', 'Customer Service, Phone');
+
+
+create type technician_t under staff_t
+(tech_title varchar2(20),
+tech_skills varchar2(50));
+
+create table technician of technician_t 
+(pers_id not null,
+staff_type not null check(staff_type in ('Technician')),
+primary key (pers_id));
+
+insert into technician technician_t values
+('10005825', 'Bagger', 'Bodo', 'Mr',
+'tricke di trrck', '03987214001', '3271',
+(select ref(c) from campus c where campus_location='Mildbu'),
+(select ref(o) from office o where off_no='BG207'),
+'Technician', 'Network Officer', 'UNIX, NT');
+
+
+create type lecturer_t under staff_t
+(area varchar2(50),
+lect_type varchar2(20)) not final;
+
+
+create type senior_lecturer_t under lecturer_t
+(no_phd number,
+no_master number,
+no_honours number);
+
+create table senior_lecturer of senior_lecturer_t 
+(pers_id not null,
+staff_type not null check(staff_type in ('Lecturer')),
+lect_type not null check(lect_type in ('Senior')),
+primary key (pers_id));
+
+insert into senior_lecturer senior_lecture_t values
+('10000255', 'Xin', 'Harry', 'Mr',
+'6 Kelley St Kew VIC', '0398875542', '3088',
+(select ref(c) from campus c where campus_location='Mildura'),
+(select ref(o) from office o where off_no='BG214'),
+'Lecturer', 'Business Infromation', 'Senior', '2', '5', '7');
+
+
+create type associate_lecturer_t under lecturer_t
+(no_honours number,
+year_join number);
+
+create table associate_lecturer of associate_lecturer_t 
+(pers_id not null,
+staff_type not null check(staff_type in ('Lecturer')),
+lect_type not null check(lect_type in ('Associate')),
+primary key (pers_id));
+
+insert into associate_lecturer associate_lecturer_t values
+('10008895', 'Xin', 'Harry', 'Mr',
+'6 Kelley St Kew VIC', '0398875542', '3088',
+(select ref(c) from campus c where campus_location='Bundoora'),
+(select ref(o) from office o where off_no='BG212'),
+'Lecturer', 'Software Engineering', 'Associate', '2', '1999');
+
+insert into associate_lecturer associate_lecturer_t values
+('10006935', 'Mustermann', 'Max', 'Mr',
+'Tester Test', '0392355542', '3098',
+(select ref(c) from campus c where campus_location='andere'), 
+select ref(o) from office o where off_no='BG212'),
+'Lecturer', 'Software Engineering', 'Associate', '', '2001');
+
+
+create type tutor_t under staff_t
+(no_hours number,
+rate number);
+
+create table tutor of tutor_t 
+(pers_id not null,
+staff_type not null check(staff_type in ('Tutor')),
+primary key (pers_id));
+
+insert into tutor tutor_t values (
+'01234234', 'Grant', 'Felix', 'Mr',
+'2 Boadle Rd Bundoora VIC', '0398548753', '3083',
+(select ref(c) from campus c where campus_location='Bundoora'), 
+(select ref(o) from office o where off_no=''),
+'Tutor', '10', '20,00');
+
+
+create table enrolls_in
+(student ref student_t,
+degree ref degree_t);
+
+insert into enrolls_in values
+((select ref(s) from student s where pers_id='01234234'), (select ref(d) from degree d where deg_id='D101'));
+insert into enrolls_in values
+((select ref(s) from student s where pers_id='10012568'), (select ref(d) from degree d where deg_id='D101'));
+
+
+create type subject_t as object
+(subj_id varchar2(10),
+subj_name varchar2(50),
+subj_credit number,
+subj_prereq varchar2(20),
+lect ref lecturer_t);
+
+create table subject of subject_t
+(subj_id not null,
+primary key (subj_id));
+
+insert into subject subject_t values
+('CSE21NET' ,'Networking', '10', 'CSE11IS',
+(select ref(s) from senior_lecturer s where pers_id='10008895'
+union
+select ref(s) from associate_lecturer s where pers_id='10008895'));
+
+insert into subject subject_t values
+('CSE42ADB', 'Advanced Database', '15', 'CSE21DB',
+(select ref(s) from senior_lecturer s where pers_id='10006935'
+union
+select ref(s) from associate_lecturer s where pers_id='10006935'));
+
+
+create table takes
+(student ref student_t,
+subject ref subject_t,
+marks number);
+
+insert into takes values
+((select ref(s) from student s where pers_id='01234234'),
+(select ref(a) from subject a where A.subj_id='CSE42ADB'),'70');
+
+insert into takes values
+((select ref(s) from student s where pers_id='10012568'),
+(select ref(a) from subject a where A.subj_id='CSE42ADB'),'80');
