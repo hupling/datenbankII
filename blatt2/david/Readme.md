@@ -74,3 +74,5 @@ Variante 2.
 ```sql
 SELECT k.nummer AS Kontonummer, deref(a.COLUMN_VALUE).adresse AS Kundenadresse FROM Konto k, Table(k.kunde) a;
 ```
+
+5.) SQL Befehle in separater Datei
