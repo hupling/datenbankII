@@ -1,0 +1,16 @@
+/ /Create function
+CREATE FUNCTION scalarfunction (
+    v         IN   NUMBER,
+    mina      IN   NUMBER,
+    maxa      IN   NUMBER,
+    newmina   IN   NUMBER,
+    newmaxa   IN   NUMBER
+) RETURN NUMBER IS
+    z NUMBER;
+BEGIN
+    z := ( v - mina ) / ( maxa - mina ) * ( newmaxa - newmina ) + newmaxa;
+
+    RETURN z;
+END;
+
+  

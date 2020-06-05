@@ -1,0 +1,50 @@
+SET SERVEROUTPUT ON FORMAT WRAPPED;
+
+DECLARE
+    maxa       NUMBER;
+    mina       NUMBER;
+    maxan      NUMBER;
+    minan      NUMBER;
+    current1   NUMBER;
+    current2   NUMBER;
+BEGIN
+    SELECT
+        MAX(value)
+    INTO maxa
+    FROM
+        value_table;
+
+    SELECT
+        MIN(value)
+    INTO mina
+    FROM
+        value_table;
+
+    FOR current1 IN (
+        SELECT
+            value
+        FROM
+            value_table
+    ) LOOP
+        SELECT
+            MAX(value)
+        INTO maxan
+        FROM
+            value_table;
+
+        SELECT
+            MIN(value)
+        INTO minan
+        FROM
+            value_table;
+
+        current2 := scalarfunction(current1.value, mina, maxa, minan, maxan);
+        UPDATE value_table
+        SET
+            value = current2
+        WHERE
+            value = current1.value;
+
+    END LOOP;
+
+END;
