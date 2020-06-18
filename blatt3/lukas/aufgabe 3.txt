@@ -1,0 +1,49 @@
+create type angestellte_t as object
+   (	name VARCHAR2(50), 
+	geburtsdatum DATE, 
+	berufsbezeichnung VARCHAR2(50), 
+	monatsgehalt NUMBER, 
+	geschlecht VARCHAR2(10), 
+	angestelltennr VARCHAR2(10)
+);
+CREATE TABLE angestellte of angestellte_t
+(angestelltennr not null,
+primary key (angestelltennr));
+
+insert into angestellte values ('Jens Jensen', '01.01.01', 'Mechaniker', 2000, 'männlich', '0000000001');
+insert into angestellte values ('Mustermann, Max', '02.02.02', 'Informatiker', 3500, 'männlich', '0000000002');
+insert into angestellte values ('Sonja Jensen', '01.01.84', 'Sekretärin', 1500, 'weiblich', '0000000003');
+
+
+create type arbeiter_t as object
+(name varchar2(50),
+vorname varchar2(50),
+geburtsmonat VARCHAR2(5),
+stundenlohn number);
+
+create table arbeiter of arbeiter_t;
+
+insert into arbeiter values ('Mustermann', 'Max', '01.80', 20);
+
+create table berufscode
+(code varchar2(4),
+bezeichnung varchar2(50),
+primary key (code));
+
+create table geschlecht
+(name varchar2(50),
+geschlechtercode varchar2(1));
+
+create table zuordnungstab
+(quelle ref ???
+personalnr varchar2(10));
+
+create table personal
+(personalnr varchar2(10),
+name varchar2(50),
+vorname varchar2(50),
+"alter" VARCHAR2(5),
+geschlecht varchar2(1),
+berufscode varchar2(4),
+jahreseinkommen number,
+primary key (personalnr));
