@@ -1,0 +1,78 @@
+SET SERVEROUTPUT ON FORMAT WRAPPED;
+
+DECLARE
+    inputsex    NUMBER;
+    inputname   VARCHAR2(50) := 'peterad';
+    outputsex   NUMBER;
+    entry1      NUMBER;
+BEGIN
+    inputsex := 0;
+    IF inputsex <> 0 THEN
+        BEGIN
+            SELECT
+                geschlechtercode
+            INTO entry1
+            FROM
+                geschlecht
+            WHERE
+                name = inputname;
+
+        EXCEPTION
+            WHEN no_data_found THEN
+                INSERT INTO geschlecht (
+                    name,
+                    geschlechtercode
+                ) VALUES (
+                    inputname,
+                    inputsex
+                );
+
+                entry1 := 0;
+                dbms_output.put_line('e');
+        END;
+
+        IF entry1 = 0 OR entry1 = inputsex THEN
+            dbms_output.put_line('d');
+        ELSE
+            UPDATE geschlecht
+            SET
+                geschlechtercode = 0
+            WHERE
+                name = inputname;
+
+            dbms_output.put_line('e');
+        END IF;
+/* output =input*/
+
+        outputsex := inputsex;
+        dbms_output.put_line('b');
+    ELSE
+        dbms_output.put_line('a');
+        BEGIN
+            SELECT
+                geschlechtercode
+            INTO entry1
+            FROM
+                geschlecht
+            WHERE
+                name = inputname;
+
+        EXCEPTION
+            WHEN no_data_found THEN
+                INSERT INTO geschlecht (
+                    name,
+                    geschlechtercode
+                ) VALUES (
+                    inputname,
+                    inputsex
+                );
+
+                entry1 := 0;
+                dbms_output.put_line('e');
+        END;
+
+        outputsex := entry1;
+    END IF;
+
+    dbms_output.put_line(outputsex);
+END;

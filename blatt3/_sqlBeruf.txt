@@ -1,0 +1,31 @@
+SET SERVEROUTPUT ON FORMAT WRAPPED;
+
+DECLARE
+    inputberuf     VARCHAR2(50) := 'ai';
+    outputnumber   NUMBER;
+BEGIN
+    BEGIN
+        SELECT
+            code
+        INTO outputnumber
+        FROM
+            berufscode
+        WHERE
+            bezeichnung = inputberuf;
+
+    EXCEPTION
+        WHEN no_data_found THEN
+            INSERT INTO berufscode ( bezeichnung ) VALUES ( inputberuf );
+
+            SELECT
+                code
+            INTO outputnumber
+            FROM
+                berufscode
+            WHERE
+                bezeichnung = inputberuf;
+
+    END;
+
+    dbms_output.put_line(outputnumber);
+END;
