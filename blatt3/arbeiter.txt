@@ -1,0 +1,26 @@
+
+
+for item range einträge{
+
+bc=berufscode("arbeiter")
+
+
+g=geschlecht(0)
+
+
+
+
+ID,vorhanden=zuordungstabelle(1,hash(vorname+geburtsdatum))
+
+
+if(vorhanden){
+update
+}else{
+insert
+}
+
+
+delete item
+
+
+}

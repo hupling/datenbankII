@@ -1,0 +1,26 @@
+input geschlecht name
+//Angestellten
+if(  geschlecht !=0 ){
+   if geschlecht.name != exist{
+      einfügen in geschlechter
+   } else if ( exist selbes geschlecht oder 0){
+       nix
+   }else if(already exist anderes geschlecht ){
+       null eintragen
+      }
+
+      return geschlecht_input
+}else{
+
+    //Arbeiter
+    if (name !=exist){ 
+       return 0
+         
+    }else {
+       Wert aus Tabelle lesen
+       return table_value
+      }
+
+ 
+}
+

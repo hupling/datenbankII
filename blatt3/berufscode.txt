@@ -1,0 +1,13 @@
+input (berufsbezeichnung)
+
+
+if(Berufsbezeichnung != exist){
+speichere in Berufstablle mit code (fortlaufende nummer)
+return fortlaufende Nummer
+}else{
+return vorhandene Berufsnummer
+}
+
+output (berufnummer)
+
+

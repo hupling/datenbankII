@@ -1,0 +1,31 @@
+
+
+for item range einträge{
+
+
+bc=berufscode(berufsbezeichnung)
+
+if(geschlecht==männlich){
+g=2
+}else{
+g=1
+}
+
+g=geschlecht(g)
+
+
+
+
+ID,verhanden=zuordnungstabelle(1,angestellten#)
+
+
+if(vorhanden){
+update
+}else{
+insert
+}
+
+
+delete item
+
+}

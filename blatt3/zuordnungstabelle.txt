@@ -1,0 +1,28 @@
+input   Herkunft  ID
+
+
+Angestellter
+
+ID AngestelltenNR
+
+
+if vorhanden
+nummer //update
+else
+return neue fortlaufende nummer //insert
+
+
+ARbeiter
+
+ID  Vorname + Geburtsdatum
+
+
+
+if vorhanden
+nummer //update
+else
+return fortlaufende nummer //insert
+
+
+output (personalID, boolean vorhanden?)
+
