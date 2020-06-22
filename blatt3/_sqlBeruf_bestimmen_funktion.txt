@@ -1,0 +1,29 @@
+create or replace FUNCTION berufscode_bestimmen (
+    inputberuf	  IN  VARCHAR2
+) RETURN NUMBER IS
+    outputnumber NUMBER;
+BEGIN
+    BEGIN
+        SELECT
+            code
+        INTO outputnumber
+        FROM
+            berufscode
+        WHERE
+            bezeichnung = inputberuf;
+
+    EXCEPTION
+        WHEN no_data_found THEN
+            INSERT INTO berufscode ( bezeichnung ) VALUES ( inputberuf );
+
+            SELECT
+                code
+            INTO outputnumber
+            FROM
+                berufscode
+            WHERE
+                bezeichnung = inputberuf;
+    END;
+
+    RETURN outputnumber;
+END;

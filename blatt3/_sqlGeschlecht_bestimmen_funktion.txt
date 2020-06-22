@@ -1,0 +1,59 @@
+create or replace FUNCTION geschlecht_bestimmen (
+    inputsex    IN NUMBER,
+    inputname   IN VARCHAR2,
+    entry1      NUMBER
+) RETURN NUMBER IS
+    outputsex NUMBER;
+BEGIN
+    IF inputsex <> 0 THEN
+        BEGIN
+            SELECT
+                geschlechtercode
+            INTO outputsex
+            FROM
+                geschlecht
+            WHERE
+                name = inputname;
+
+        EXCEPTION
+            WHEN no_data_found THEN
+                INSERT INTO geschlecht (
+                    name,
+                    geschlechtercode
+                ) VALUES (
+                    inputname,
+                    inputsex
+                );
+                outputsex := inputsex;
+        END;
+
+        IF outputsex != 0 AND outputsex != inputsex THEN
+            UPDATE geschlecht
+            SET
+                geschlechtercode = 0
+            WHERE
+                name = inputname;
+        END IF;
+/* output =input*/
+
+        outputsex := inputsex;
+        RETURN outputsex;
+    ELSE
+        BEGIN
+            SELECT
+                geschlechtercode
+            INTO outputsex
+            FROM
+                geschlecht
+            WHERE
+                name = inputname;
+
+        EXCEPTION
+            WHEN no_data_found THEN
+            
+                outputsex := 0;
+        END;
+    END IF;
+    
+    RETURN outputsex;
+END;

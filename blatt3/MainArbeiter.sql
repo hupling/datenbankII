@@ -1,0 +1,52 @@
+SET SERVEROUTPUT ON FORMAT WRAPPED;
+
+DECLARE
+    arbeiter_   arbeiter_t;
+    bcode	    NUMBER;
+    gcode	    NUMBER;
+    ID		    NUMBER;
+    arbeiternr  varchar2(100);
+    jahre       number;
+BEGIN
+
+    FOR arbeiter_ IN (
+        SELECT
+            name, vorname, geburtsmonat,(stundenlohn * 40 * 4 * 12) AS jahresgehalt
+        FROM
+            arbeiter
+    ) LOOP
+
+	bcode := berufscode_bestimmen('Arbeiter');
+
+	gcode := geschlecht_bestimmen(0, arbeiter_.vorname);
+	
+	arbeiternr := arbeiter_.vorname || arbeiter_.geburtsmonat;
+    
+    jahre := 100 + to_char(sysdate, 'YY') - TRIM(SUBSTR(arbeiter_.geburtsmonat, 4, 5));
+    
+    BEGIN
+            SELECT personalnr
+            INTO ID
+            FROM zuordnungstab
+            WHERE arbeiter_angestelltennr = arbeiternr;
+        EXCEPTION
+            WHEN no_data_found THEN
+                insert into zuordnungstab (system, arbeiter_angestelltennr) values
+                (2, arbeiternr);
+            
+                SELECT personalnr INTO ID FROM zuordnungstab
+                WHERE arbeiter_angestelltennr = arbeiternr;
+            
+                insert into personal values
+                (ID, arbeiter_.name, arbeiter_.vorname, jahre, gcode, bcode, arbeiter_.jahresgehalt);
+        END;
+	    
+        update personal
+        set name = arbeiter_.name, vorname = arbeiter_.vorname, "alter" = jahre, geschlecht = gcode,
+        berufscode = bcode, jahreseinkommen = arbeiter_.jahresgehalt
+        where personalnr = ID;
+
+        delete from arbeiter arbeiter_;
+    
+    END LOOP;
+END;
