@@ -1,0 +1,105 @@
+CREATE OR REPLACE TRIGGER angestellten_trigger AFTER
+    INSERT ON angestellte
+    FOR EACH ROW
+DECLARE
+    angestellter   angestellte_t;
+    bcode          NUMBER;
+    gcode          NUMBER;
+    name_idx       NUMBER;
+    name1          VARCHAR2(50);
+    vorname        VARCHAR2(50);
+    id             NUMBER;
+BEGIN
+    FOR angestellter IN (
+        SELECT
+            name,
+            ( to_char(sysdate, 'YYYY') - to_char(geburtsdatum, 'YYYY') ) AS jahre,
+            berufsbezeichnung,
+            ( monatsgehalt * 12 ) AS jahresgehalt,
+            geschlecht,
+            angestelltennr
+        FROM
+            angestellte
+    ) LOOP
+        name_idx := instr(angestellter.name, ', ', 1);
+        IF name_idx <> 0 THEN
+            name1 := trim(substr(angestellter.name, 1, name_idx - 1));
+
+            vorname := trim(substr(angestellter.name, name_idx + 2, length(angestellter.name)));
+
+        ELSE
+            name_idx := instr(angestellter.name, ' ', 1);
+            vorname := trim(substr(angestellter.name, 1, name_idx - 1));
+
+            name1 := trim(substr(angestellter.name, name_idx + 1, length(angestellter.name)));
+
+        END IF;
+
+        bcode := berufscode_bestimmen(angestellter.berufsbezeichnung);
+        IF angestellter.geschlecht = 'männlich' THEN
+            gcode := 2;
+        ELSE
+            IF angestellter.geschlecht = 'weiblich' THEN
+                gcode := 1;
+            ELSE
+                gcode := 0;
+            END IF;
+        END IF;
+
+        gcode := geschlecht_bestimmen(gcode, vorname);
+        BEGIN
+            SELECT
+                personalnr
+            INTO id
+            FROM
+                zuordnungstab
+            WHERE
+                arbeiter_angestelltennr = angestellter.angestelltennr;
+
+        EXCEPTION
+            WHEN no_data_found THEN
+                INSERT INTO zuordnungstab (
+                    system,
+                    arbeiter_angestelltennr
+                ) VALUES (
+                    1,
+                    angestellter.angestelltennr
+                );
+
+                SELECT
+                    personalnr
+                INTO id
+                FROM
+                    zuordnungstab
+                WHERE
+                    arbeiter_angestelltennr = angestellter.angestelltennr;
+
+                INSERT INTO personal VALUES (
+                    id,
+                    name1,
+                    vorname,
+                    angestellter.jahre,
+                    gcode,
+                    bcode,
+                    angestellter.jahresgehalt
+                );
+
+        END;
+
+        UPDATE personal
+        SET
+            name = name1,
+            vorname = vorname,
+            "alter" = angestellter.jahre,
+            geschlecht = gcode,
+            berufscode = bcode,
+            jahreseinkommen = angestellter.jahresgehalt
+        WHERE
+            personalnr = id;
+
+        DELETE FROM angestellte
+        WHERE
+            angestelltennr = angestellter.angestelltennr;
+
+    END LOOP;
+END;
