@@ -22,13 +22,19 @@ BEGIN
 	
 	arbeiternr := arbeiter_.vorname || arbeiter_.geburtsmonat;
     
-    jahre := 100 + to_char(sysdate, 'YY') - TRIM(SUBSTR(arbeiter_.geburtsmonat, 4, 5));
+        jahre := 100 + to_char(sysdate, 'YY') - TRIM(SUBSTR(arbeiter_.geburtsmonat, 4, 5));
     
-    BEGIN
-            SELECT personalnr
+        BEGIN
+	    SELECT personalnr
             INTO ID
             FROM zuordnungstab
             WHERE arbeiter_angestelltennr = arbeiternr;
+
+	    update personal
+            set name = arbeiter_.name, vorname = arbeiter_.vorname, "alter" = jahre, geschlecht = gcode,
+            berufscode = bcode, jahreseinkommen = arbeiter_.jahresgehalt
+            where personalnr = ID;
+
         EXCEPTION
             WHEN no_data_found THEN
                 insert into zuordnungstab (system, arbeiter_angestelltennr) values
@@ -40,11 +46,6 @@ BEGIN
                 insert into personal values
                 (ID, arbeiter_.name, arbeiter_.vorname, jahre, gcode, bcode, arbeiter_.jahresgehalt);
         END;
-	    
-        update personal
-        set name = arbeiter_.name, vorname = arbeiter_.vorname, "alter" = jahre, geschlecht = gcode,
-        berufscode = bcode, jahreseinkommen = arbeiter_.jahresgehalt
-        where personalnr = ID;
 
         delete from arbeiter arbeiter_;
     
