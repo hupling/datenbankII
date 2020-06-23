@@ -1,0 +1,79 @@
+CREATE OR REPLACE TRIGGER arbeiter_trigger AFTER
+    INSERT ON arbeiter
+    FOR EACH ROW
+DECLARE
+    arbeiter_    arbeiter_t;
+    bcode        NUMBER;
+    gcode        NUMBER;
+    id           NUMBER;
+    arbeiternr   VARCHAR2(100);
+    jahre        NUMBER;
+BEGIN
+    FOR arbeiter_ IN (
+        SELECT
+            name,
+            vorname,
+            geburtsmonat,
+            ( stundenlohn * 40 * 4 * 12 ) AS jahresgehalt
+        FROM
+            arbeiter
+    ) LOOP
+        bcode := berufscode_bestimmen('Arbeiter');
+        gcode := geschlecht_bestimmen(0, arbeiter_.vorname);
+        arbeiternr := arbeiter_.vorname || arbeiter_.geburtsmonat;
+        jahre := 100 + to_char(sysdate, 'YY') - trim(substr(arbeiter_.geburtsmonat, 4, 5));
+
+        BEGIN
+            SELECT
+                personalnr
+            INTO id
+            FROM
+                zuordnungstab
+            WHERE
+                arbeiter_angestelltennr = arbeiternr;
+
+        EXCEPTION
+            WHEN no_data_found THEN
+                INSERT INTO zuordnungstab (
+                    system,
+                    arbeiter_angestelltennr
+                ) VALUES (
+                    2,
+                    arbeiternr
+                );
+
+                SELECT
+                    personalnr
+                INTO id
+                FROM
+                    zuordnungstab
+                WHERE
+                    arbeiter_angestelltennr = arbeiternr;
+
+                INSERT INTO personal VALUES (
+                    id,
+                    arbeiter_.name,
+                    arbeiter_.vorname,
+                    jahre,
+                    gcode,
+                    bcode,
+                    arbeiter_.jahresgehalt
+                );
+
+        END;
+
+        UPDATE personal
+        SET
+            name = arbeiter_.name,
+            vorname = arbeiter_.vorname,
+            "alter" = jahre,
+            geschlecht = gcode,
+            berufscode = bcode,
+            jahreseinkommen = arbeiter_.jahresgehalt
+        WHERE
+            personalnr = id;
+
+        DELETE FROM arbeiter arbeiter_;
+
+    END LOOP;
+END;
