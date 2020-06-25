@@ -8,7 +8,7 @@ CREATE FUNCTION scalarfunction (
 ) RETURN NUMBER IS
     z NUMBER;
 BEGIN
-    z := ( v - mina ) / ( maxa - mina ) * ( newmaxa - newmina ) + newmaxa;
+    z := ( v - mina ) / ( maxa - mina ) * ( newmaxa - newmina ) + newMinA;
 
     RETURN z;
 END;

@@ -1,0 +1,4 @@
+begin
+skalarP(10,4);
+
+end;

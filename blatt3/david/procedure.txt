@@ -1,10 +1,11 @@
 SET SERVEROUTPUT ON FORMAT WRAPPED;
 
-DECLARE
+CREATE PROCEDURE skalarp (
+    maxan   IN   NUMBER,
+    minan   IN   NUMBER
+) IS
     maxa       NUMBER;
     mina       NUMBER;
-    maxan      NUMBER;
-    minan      NUMBER;
     current1   NUMBER;
     current2   NUMBER;
 BEGIN
@@ -26,18 +27,6 @@ BEGIN
         FROM
             value_table
     ) LOOP
-        SELECT
-            MAX(value)
-        INTO maxan
-        FROM
-            value_table;
-
-        SELECT
-            MIN(value)
-        INTO minan
-        FROM
-            value_table;
-
         current2 := scalarfunction(current1.value, mina, maxa, minan, maxan);
         UPDATE value_table
         SET
