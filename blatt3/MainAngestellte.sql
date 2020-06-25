@@ -45,6 +45,12 @@ BEGIN
             INTO ID
             FROM zuordnungstab
             WHERE arbeiter_angestelltennr = angestellter.angestelltennr;
+            
+            update personal
+            set name = name1, vorname = vorname, "alter" = angestellter.jahre, geschlecht = gcode,
+            berufscode = bcode, jahreseinkommen = angestellter.jahresgehalt
+            where personalnr = ID;
+        
         EXCEPTION
             WHEN no_data_found THEN
                 insert into zuordnungstab (system, arbeiter_angestelltennr) values
@@ -56,11 +62,6 @@ BEGIN
                 insert into personal values
                 (ID, name1, vorname, angestellter.jahre, gcode, bcode, angestellter.jahresgehalt);
         END;
-	    
-        update personal
-        set name = name1, vorname = vorname, "alter" = angestellter.jahre, geschlecht = gcode,
-        berufscode = bcode, jahreseinkommen = angestellter.jahresgehalt
-        where personalnr = ID;
 
         delete from angestellte where angestelltennr = angestellter.angestelltennr;
         

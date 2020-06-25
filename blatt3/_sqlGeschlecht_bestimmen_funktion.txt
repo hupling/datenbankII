@@ -1,7 +1,6 @@
 create or replace FUNCTION geschlecht_bestimmen (
     inputsex    IN NUMBER,
     inputname   IN VARCHAR2,
-    entry1      NUMBER
 ) RETURN NUMBER IS
     outputsex NUMBER;
 BEGIN
