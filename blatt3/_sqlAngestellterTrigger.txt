@@ -56,6 +56,17 @@ BEGIN
             WHERE
                 arbeiter_angestelltennr = angestellter.angestelltennr;
 
+        UPDATE personal
+        SET
+            name = name1,
+            vorname = vorname,
+            "alter" = angestellter.jahre,
+            geschlecht = gcode,
+            berufscode = bcode,
+            jahreseinkommen = angestellter.jahresgehalt
+        WHERE
+            personalnr = id;
+
         EXCEPTION
             WHEN no_data_found THEN
                 INSERT INTO zuordnungstab (
@@ -85,17 +96,6 @@ BEGIN
                 );
 
         END;
-
-        UPDATE personal
-        SET
-            name = name1,
-            vorname = vorname,
-            "alter" = angestellter.jahre,
-            geschlecht = gcode,
-            berufscode = bcode,
-            jahreseinkommen = angestellter.jahresgehalt
-        WHERE
-            personalnr = id;
 
         DELETE FROM angestellte
         WHERE
